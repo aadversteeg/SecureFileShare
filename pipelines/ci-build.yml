@@ -1,0 +1,31 @@
+trigger:
+  - master
+
+variables:
+  BuildConfiguration: 'Release'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        pool: Hosted Windows 2019 with VS2019
+        steps:
+
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: restore
+            projects: '**/*.csproj'
+
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            projects: '**/*.sln'
+            arguments: '--configuration $(BuildConfiguration)'
+
+        - task: DotNetCoreCLI@2
+          displayName: Test
+          inputs:
+            command: test
+            projects: '**/UnitTests*.csproj'
+            arguments: '--configuration $(BuildConfiguration)'
