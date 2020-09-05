@@ -1,0 +1,72 @@
+resources:
+  pipelines:
+  - pipeline: CIBuild
+    source: "CI - SecureFileShare"
+
+
+trigger:
+- none
+
+stages:
+
+- stage: DeployTest
+  displayName: "Deploy to Test"
+  variables:
+   Environment: Test
+   Postfix: tst
+   ApplicationName: securefileshare
+   ApplicationVersion: v1
+   ResourceGroupName: $(ApplicationName)-$(ApplicationVersion)-$(Postfix)
+  jobs:
+  - deployment: 'DeployToTest'
+    displayName: 'Deployment to Test'
+    pool: Hosted Windows 2019 with VS2019
+    environment:
+      name: Test
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - checkout: none
+          - download: CIBuild
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: 'Azure Free Trial'
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: '$(ResourceGroupName)'
+              location: 'West Europe'
+              templateLocation: 'Linked artifact'
+              csmFile: '$(Pipeline.Workspace)/CIBuild/drop/infra/application.json'
+              overrideParameters: -applicationName "$(ApplicationName)" -applicationVersion "$(ApplicationVersion)" -environment "$(Postfix)" -numberOfWorkers "1" -sku "Basic" -skuCode "B1" -workerSize "0" -workerSizeId "0"
+              deploymentMode: 'Incremental'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy to appservice'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Azure Free Trial'
+              appType: 'webApp'
+              WebAppName: 'webapp-$(ApplicationName)-$(ApplicationVersion)-$(Postfix)'
+              packageForLinux: '$(Pipeline.Workspace)/CIBuild/drop/Server.zip'
+              enableCustomDeployment: true
+              DeploymentType: 'webDeploy'
+              RemoveAdditionalFilesFlag: true
+              ExcludeFilesFromAppDataFlag: false
+              RenameFilesFlag: false
+              JSONFiles: 'appsettings.json'
+
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy to function'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Azure Free Trial'
+              appType: 'functionApp'
+              WebAppName: 'function-$(ApplicationName)-$(ApplicationVersion)-$(Postfix)'
+              packageForLinux: '$(Pipeline.Workspace)/CIBuild/drop/Core.FunctionApp.zip'
+              enableCustomDeployment: true
+              DeploymentType: 'zipDeploy'
+              TakeAppOfflineFlag: false
+

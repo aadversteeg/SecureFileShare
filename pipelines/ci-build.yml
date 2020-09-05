@@ -4,28 +4,39 @@ trigger:
 variables:
   BuildConfiguration: 'Release'
 
-stages:
-  - stage: Build
-    jobs:
-      - job: Build
-        pool: Hosted Windows 2019 with VS2019
-        steps:
+jobs:
+  - job: Build
+    pool: Hosted Windows 2019 with VS2019
+    steps:
+    - template: build-steps.yml
+      parameters:
+        BuildConfiguration: '$(BuildConfiguration)'
 
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: restore
-            projects: '**/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'publish function'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: '**/*/Core.FunctionApp.csproj'
+        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-build'
 
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            projects: '**/*.sln'
-            arguments: '--configuration $(BuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      displayName: 'publish webapp'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: '**/*/Core.WebApp.Server.csproj'
+        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-build'
 
-        - task: DotNetCoreCLI@2
-          displayName: Test
-          inputs:
-            command: test
-            projects: '**/UnitTests*.csproj'
-            arguments: '--configuration $(BuildConfiguration)'
+    - task: CopyFiles@2
+      displayName: 'Copy infra files to: $(build.artifactstagingdirectory)/infra'
+      inputs:
+        SourceFolder: infra
+        TargetFolder: '$(build.artifactstagingdirectory)/infra'                  
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'publish artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+        ArtifactName: 'drop'
+

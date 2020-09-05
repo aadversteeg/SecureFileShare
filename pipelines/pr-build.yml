@@ -1,0 +1,16 @@
+trigger:
+  none
+
+pr:
+- master  
+
+variables:
+  BuildConfiguration: 'Release'
+
+jobs:
+  - job: Build
+    pool: Hosted Windows 2019 with VS2019
+    steps:
+    - template: build-steps.yml
+      parameters:
+        BuildConfiguration: '$(BuildConfiguration)'
