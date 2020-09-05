@@ -40,7 +40,7 @@ stages:
               location: 'West Europe'
               templateLocation: 'Linked artifact'
               csmFile: '$(Pipeline.Workspace)/CIBuild/drop/infra/application.json'
-              overrideParameters: -applicationName "$(ApplicationName)" -applicationVersion "$(ApplicationVersion)" -environment "$(Postfix)" -numberOfWorkers "1" -sku "Basic" -skuCode "B1" -workerSize "0" -workerSizeId "0"
+              overrideParameters: -applicationName "$(ApplicationName)" -applicationVersion "$(ApplicationVersion)" -environment "$(Postfix)" -numberOfWorkers "1" -sku "Basic" -skuCode "B1" -workerSize "0" -workerSizeId "0" -opsObjectId $(opsObjectId)
               deploymentMode: 'Incremental'
 
           - task: AzureRmWebAppDeployment@4

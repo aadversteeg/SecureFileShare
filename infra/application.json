@@ -16,6 +16,9 @@
         "prd"
       ]
     },
+    "opsObjectId": {
+      "type": "string"
+    },    
     "sku": {
       "type": "string"
     },
@@ -201,6 +204,49 @@
           "enabledForDiskEncryption": false,
           "enableRbacAuthorization": false,
           "accessPolicies": [
+            {
+              "tenantId": "[variables('tenantId')]",
+              "objectId": "[parameters('opsObjectId')]",
+              "permissions": {
+                "keys": [
+                  "Get",
+                  "List",
+                  "Update",
+                  "Create",
+                  "Import",
+                  "Delete",
+                  "Recover",
+                  "Backup",
+                  "Restore"
+                ],
+                "secrets": [
+                  "Get",
+                  "List",
+                  "Set",
+                  "Delete",
+                  "Recover",
+                  "Backup",
+                  "Restore"
+                ],
+                "certificates": [
+                  "Get",
+                  "List",
+                  "Update",
+                  "Create",
+                  "Import",
+                  "Delete",
+                  "Recover",
+                  "Backup",
+                  "Restore",
+                  "ManageContacts",
+                  "ManageIssuers",
+                  "GetIssuers",
+                  "ListIssuers",
+                  "SetIssuers",
+                  "DeleteIssuers"
+                ]
+              }
+            },            
             {
               "tenantId": "[variables('tenantId')]",
               "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2016-08-01', 'Full').identity.principalId]",
