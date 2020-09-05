@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Core.WebApp.Server
 {
@@ -20,6 +16,14 @@ namespace Core.WebApp.Server
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+
+                    webBuilder.ConfigureAppConfiguration((context, config) =>
+                    {
+                        var keyVaultName = config.Build()["KeyVault:Application"];
+                        Console.WriteLine($"Using key vault: \"{keyVaultName}\".");
+                        config.AddAzureKeyVault($"https://{keyVaultName}.vault.azure.net");
+                    });
+
                     webBuilder.UseStartup<Startup>();
                 });
     }
