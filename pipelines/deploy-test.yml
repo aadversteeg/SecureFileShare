@@ -34,7 +34,7 @@ stages:
           - task: AzureResourceManagerTemplateDeployment@3
             inputs:
               deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: 'Azure Free Trial'
+              azureResourceManagerConnection: $(AzureServiceConnectionName)
               action: 'Create Or Update Resource Group'
               resourceGroupName: '$(ResourceGroupName)'
               location: 'West Europe'
@@ -47,7 +47,7 @@ stages:
             displayName: 'Deploy to appservice'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'Azure Free Trial'
+              azureSubscription: $(AzureServiceConnectionName)
               appType: 'webApp'
               WebAppName: 'webapp-$(ApplicationName)-$(ApplicationVersion)-$(Postfix)'
               packageForLinux: '$(Pipeline.Workspace)/CIBuild/drop/Server.zip'
@@ -62,7 +62,7 @@ stages:
             displayName: 'Deploy to function'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'Azure Free Trial'
+              azureSubscription: $(AzureServiceConnectionName)
               appType: 'functionApp'
               WebAppName: 'function-$(ApplicationName)-$(ApplicationVersion)-$(Postfix)'
               packageForLinux: '$(Pipeline.Workspace)/CIBuild/drop/Core.FunctionApp.zip'
