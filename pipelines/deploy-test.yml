@@ -70,4 +70,5 @@ stages:
               enableCustomDeployment: true
               DeploymentType: 'zipDeploy'
               TakeAppOfflineFlag: false
+              JSONFiles: 'appsettings.json'
 
