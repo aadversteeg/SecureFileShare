@@ -17,6 +17,7 @@ stages:
    ApplicationName: securefileshare
    ApplicationVersion: v1
    ResourceGroupName: $(ApplicationName)-$(ApplicationVersion)-$(Postfix)
+   KeyVault.Application: $(ApplicationName)-$(ApplicationVersion)-$(Postfix)
   jobs:
   - deployment: 'DeployToTest'
     displayName: 'Deployment to Test'
