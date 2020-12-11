@@ -10,12 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core.Infrastructure.Storage.AzureBlob\Core.Infrastructure.Storage.AzureBlob.csproj" />
+    <ProjectReference Include="..\..\Core.Infrastructure.Storage.FileSystem\Core.Infrastructure.Storage.FileSystem.csproj" />
+    <ProjectReference Include="..\..\Core.Infrastructure.Storage\Core.Infrastructure.Storage.csproj" />
     <ProjectReference Include="..\Client\Core.WebApp.Client.csproj" />
     <ProjectReference Include="..\Shared\Core.WebApp.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 
